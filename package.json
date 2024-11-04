@@ -24,8 +24,17 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "permissions": [
+      "activeTab",
+      "clipboardRead",
+      "clipboardWrite",
+      "tabs"
+     
+    ],
+
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "https://www.facebook.com/marketplace/you/selling"
     ]
   }
 }
