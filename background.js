@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       saveAs: true
     });
 
-    sendResponse({ status: "Data saved successfully" });
-    return true; // Important: keeps the message channel open for async response
+    // sendResponse({ status: "Data saved successfully" });
+    // return true; // Important: keeps the message channel open for async response
   }
 });

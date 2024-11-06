@@ -61,6 +61,7 @@ async function scrapeAndGetDesiredData() {
         // const other details = 
         console.log("All elements found, exiting loop.");
 
+        //check if anydata found 
         chrome.runtime.sendMessage({
             action: "saveData",
             data: {
@@ -69,11 +70,11 @@ async function scrapeAndGetDesiredData() {
               bed_bath,
               address
             }
-          }, (response) => {
-            console.log("Response from background:", response);
-            window.close()
+        //   }, (response) => {
+        //     console.log("Response from background:", response);
+            
           });
-
+        window.close()
         break;
       }
     } else {
