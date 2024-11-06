@@ -1,4 +1,4 @@
-{
+{ 
   "name": "facebook-bot",
   "displayName": "Facebook bot",
   "version": "0.0.1",
@@ -26,15 +26,27 @@
   "manifest": {
     "permissions": [
       "activeTab",
-      "clipboardRead",
-      "clipboardWrite",
-      "tabs"
+      "tabs",
+      "scripting",
+      "storage",
+      "unlimitedStorage",
+      "offscreen",
+      "downloads"
      
     ],
 
     "host_permissions": [
       "https://*/*",
       "https://www.facebook.com/marketplace/you/selling"
-    ]
+    ],
+    "web_accessible_resources": [
+    {
+      "resources": ["xlsx.full.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
   }
 }
