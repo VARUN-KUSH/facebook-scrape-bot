@@ -19,22 +19,16 @@ async function scrapeAndGetDesiredData() {
     return
   }
   console.log("scraping data points running")
-  const xpath =
-    "/html/body/div[1]/div/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div[2]/div/div/div/div/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]"
-  // Find the element using XPath
+  
   while (true) {
-    // Find the element using XPath
-    const element = document.evaluate(
-      xpath,
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    ).singleNodeValue
+    const marketplace_items = document.querySelector('div[aria-label="Collection of Marketplace items"][role="main"]')
+    console.log("market_place>>>>>>>", marketplace_items)
+    const itemssection = marketplace_items.querySelector(':scope > div > div > div > div > div > div:nth-child(1) > div:nth-child(3)')
+    console.log("itemSection>>>>>>>>", itemssection)
+    const element = itemssection?.querySelector(':scope > div > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(1)')
+    console.log("element>>>>>>>", element)
 
-    // Check if the element was found
-    console.log("element>>>>>>", element)
-    if (element) {
+    if (itemssection && element) {
       // Use querySelectorAll to find all inner divs and get their text content
       const divElements = element.querySelector(":scope > div:nth-child(1)")
       console.log("divElements>>>>>>>>>", divElements)
@@ -86,6 +80,76 @@ async function scrapeAndGetDesiredData() {
   }
 }
 
+// async function waitForPageLoadAndCheckDiv() {
+//   // Run only on the seller page
+//   if (
+//     !window.location.href.includes(
+//       "https://www.facebook.com/marketplace/you/selling"
+//     )
+//   ) {
+//     return
+//   }
+
+//   const marketplace_items = document.querySelector('div[aria-label="Collection of your marketplace items"][role="main"]')
+//   console.log("market_place>>>>>>>", marketplace_items)
+//   const itemssection = marketplace_items.querySelector(':scope > div > div > div:nth-child(2) > div:nth-child(1)')
+//   console.log("itemSection>>>>>>>>", itemssection)
+
+//   const listings = itemssection.querySelector(':scope > div > div:nth-child(3) > div > div > span')
+//   console.log("listing>>>>>>>", listings)
+//   const listingsElement = listings.querySelector(':scope > div > div')
+
+//   if (listingsElement) {
+//     console.log("listingsElement>>>>>>>>>>", listingsElement)
+
+//     const innerDivs = Array.from(listingsElement.children).filter(
+//       (child) => child.tagName === "DIV"
+//     )
+//     console.log("innerDiv>>>>>>>", innerDivs)
+
+//     for (const div of innerDivs) {
+//       // Wait until the share button and more options button are found
+//       await new Promise(async (resolve) => {
+//         while (true) {
+//           console.log("div>>>>>>>>>", div)
+
+//           const share = div.querySelector(
+//             ":scope > div > div > div > div:nth-child(2) > div > div:nth-child(2) > div"
+//           )
+//           console.log("share>>>>>", share)
+
+//           if (share) {
+//             const moreoptionButton = share.querySelector(
+//               'div[role="button"][aria-label*="More options"]'
+//             )
+//             console.log("moreoptionButton>>>>>>>>", moreoptionButton)
+
+//             if (moreoptionButton) {
+//               const event = new MouseEvent("click", {
+//                 bubbles: true,
+//                 cancelable: true,
+//                 view: window
+//               })
+//               moreoptionButton.dispatchEvent(event)
+
+//               // Wait for the popup to load and find the "Copy Link" button
+//               await waitForViewListingButton(moreoptionButton)
+//               resolve()
+//               break
+//             }
+//           } else {
+//             console.log("Share button not found")
+//           }
+
+//           // Wait for 500 ms before the next iteration
+//           await new Promise((resolve) => setTimeout(resolve, 500))
+//         }
+//       })
+//     }
+//   }
+// }
+
+
 async function waitForPageLoadAndCheckDiv() {
   // Run only on the seller page
   if (
@@ -96,63 +160,79 @@ async function waitForPageLoadAndCheckDiv() {
     return
   }
 
-  const xpathoflistings =
-    "/html/body/div[1]/div/div[1]/div[1]/div/div[3]/div/div/div[1]/div[1]/div[2]/div/div/div[2]/div[1]/div/div[3]/div/div/span/div/div"
+  // Block until marketplace_items is available
+  let topelement = document.querySelector('div[id*="mount_0_0"]')
+  console.log("topelement>>>>>", topelement)
+  let insidelement = topelement.querySelector(':scope > div > div:nth-child(1) > div > div:nth-child(4)')
+  console.log("insideelement>>>>>>>>", insidelement)
+  let topofmarketplace = insidelement.querySelector(':scope > div > div > div:nth-child(1) > div:nth-child(1)')
+  console.log("topofmarketplace>>>>>>>>>>>>", topofmarketplace)
 
-  const listingsElement = document.evaluate(
-    xpathoflistings,
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null
-  ).singleNodeValue
+  let marketplace_items;
+  while (!marketplace_items) {
+    marketplace_items = topofmarketplace.querySelector(':scope > div[role="main"]');
+    if (!marketplace_items) {
+      console.log("Waiting for marketplace items...");
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Wait for 500 ms before checking again
+    }
+  }
+
+  console.log("market_place>>>>>>>", marketplace_items);
+  
+  const itemssection = marketplace_items.querySelector(':scope > div > div > div:nth-child(2) > div:nth-child(1)');
+  console.log("itemSection>>>>>>>>", itemssection);
+
+  const listings = itemssection.querySelector(':scope > div > div:nth-child(3) > div > div > span');
+  console.log("listing>>>>>>>", listings);
+
+  const listingsElement = listings.querySelector(':scope > div > div');
 
   if (listingsElement) {
-    console.log("listingsElement>>>>>>>>>>", listingsElement)
+    console.log("listingsElement>>>>>>>>>>", listingsElement);
 
     const innerDivs = Array.from(listingsElement.children).filter(
       (child) => child.tagName === "DIV"
-    )
-    console.log("innerDiv>>>>>>>", innerDivs)
+    );
+    console.log("innerDiv>>>>>>>", innerDivs);
 
     for (const div of innerDivs) {
       // Wait until the share button and more options button are found
       await new Promise(async (resolve) => {
         while (true) {
-          console.log("div>>>>>>>>>", div)
+          console.log("div>>>>>>>>>", div);
 
           const share = div.querySelector(
             ":scope > div > div > div > div:nth-child(2) > div > div:nth-child(2) > div"
-          )
-          console.log("share>>>>>", share)
+          );
+          console.log("share>>>>>", share);
 
           if (share) {
             const moreoptionButton = share.querySelector(
               'div[role="button"][aria-label*="More options"]'
-            )
-            console.log("moreoptionButton>>>>>>>>", moreoptionButton)
+            );
+            console.log("moreoptionButton>>>>>>>>", moreoptionButton);
 
             if (moreoptionButton) {
               const event = new MouseEvent("click", {
                 bubbles: true,
                 cancelable: true,
                 view: window
-              })
-              moreoptionButton.dispatchEvent(event)
+              });
+              moreoptionButton.dispatchEvent(event);
 
               // Wait for the popup to load and find the "Copy Link" button
-              await waitForViewListingButton(moreoptionButton)
-              resolve()
-              break
+              await waitForViewListingButton(moreoptionButton);
+              resolve();
+              break;
             }
           } else {
-            console.log("Share button not found")
+            console.log("Share button not found");
           }
 
           // Wait for 500 ms before the next iteration
-          await new Promise((resolve) => setTimeout(resolve, 500))
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
-      })
+      });
     }
   }
 }
@@ -187,8 +267,24 @@ async function waitForViewListingButton(moreoptionButton) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "start") {
     console.log('Received "start" message from popup')
+    // chrome.runtime.sendMessage({
+    //   action: "saveData",
+    //   data: {
+    //     monthly_rent: "60k",
+    //     marketplace_URL: "https://www.facebook.com/marketplace/you/selling",
+    //     bed_bath: "3 beds 3 baths flat",
+    //     address: "banglore residency road"
+    //   }
+      
+    // },
+  //   (response) => {
+  //     console.log("Response from background:", response);
+  //      // waitForPageLoadAndCheckDiv()
+  //     sendResponse({ status: "Start function executed" })
+  // });
     waitForPageLoadAndCheckDiv()
     sendResponse({ status: "Start function executed" })
+    
   }
   return true // Keep the listener active if async response is needed
 })

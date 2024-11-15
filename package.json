@@ -31,22 +31,21 @@
       "storage",
       "unlimitedStorage",
       "offscreen",
-      "downloads"
+      "downloads",
+      "identity",
+      "https://www.googleapis.com/"
      
     ],
-
+    "oauth2": {
+    "client_id": "758532640258-p231i5f3q4ieg6demahu029pbs6ajbpu.apps.googleusercontent.com.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets"
+    ]
+  },
     "host_permissions": [
       "https://*/*",
-      "https://www.facebook.com/marketplace/you/selling"
-    ],
-    "web_accessible_resources": [
-    {
-      "resources": ["xlsx.full.min.js"],
-      "matches": ["<all_urls>"]
-    }
-  ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'"
-  }
+      "https://www.facebook.com/*"
+    ]
+  
   }
 }
